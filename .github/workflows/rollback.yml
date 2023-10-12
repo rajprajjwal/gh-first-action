@@ -1,8 +1,23 @@
-curl -X POST \
--H "Accept: application/vnd.github.v3+json" \
--H "Authorization: Bearer YOUR_PAT" \
-https://api.github.com/repos/YOUR_USERNAME/YOUR_REPO/git/refs \
--d '{
-  "ref": "refs/heads/rollback-branch",
-  "sha": "COMMIT_SHA_TO_ROLLBACK_TO"
-}'
+name: Rollback Deployment
+
+on:
+  workflow_run:
+    workflows: ["rollback.yml"]
+    types:
+      - completed
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Create Rollback Deployment
+      id: rollback-deployment
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        ROLLBACK_DEPLOYMENT=$(curl -s -X POST \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \ https://api.github.com/repos/:owner/:repo/deployments \
+          -d '{ "ref": "Create first-action.yml"
