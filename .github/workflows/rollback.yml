@@ -1,0 +1,8 @@
+curl -X POST \
+-H "Accept: application/vnd.github.v3+json" \
+-H "Authorization: Bearer YOUR_PAT" \
+https://api.github.com/repos/YOUR_USERNAME/YOUR_REPO/git/refs \
+-d '{
+  "ref": "refs/heads/rollback-branch",
+  "sha": "COMMIT_SHA_TO_ROLLBACK_TO"
+}'
