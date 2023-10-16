@@ -1,11 +1,15 @@
 name: Rollback Deployment
 
 on:
-  workflow_run:
-    workflows: ["Deploy"]
-    types:  [requested]
-    branches:
-      - 'rollback-branch'
+  push:
+    branches:["rollback-branch"]
+    paths:
+    - .github/workflows/rollback.yml
+  # workflow_run:
+  #   workflows: ["Deploy"]
+  #   types:  [requested]
+  #   branches:
+  #     - 'rollback-branch'
 
 jobs:
   rollback:
