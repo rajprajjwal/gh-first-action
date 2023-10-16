@@ -5,7 +5,7 @@ on:
     workflows: ["Deploy"]
     types:  [requested]
     branches:
-      - 'rollback-branch/**'
+      - 'rollback-branch'
 
 jobs:
   rollback:
