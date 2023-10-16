@@ -3,8 +3,9 @@ name: Rollback Deployment
 on:
   workflow_run:
     workflows: ["rollback.yml"]
-    types:
-      - completed
+    types:  [requested]
+    branches:
+      - 'rollback-branch/**'
 
 jobs:
   rollback:
