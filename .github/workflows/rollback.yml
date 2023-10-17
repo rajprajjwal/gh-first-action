@@ -2,7 +2,7 @@ name: Rollback Deployment
 
 on:
   push:
-    branches: ["main"]
+    branches: ["rollback-branch"]
     paths: [".github/workflows/rollback.yml"]
   
   # workflow_run:
