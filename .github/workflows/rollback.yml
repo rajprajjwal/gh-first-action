@@ -2,7 +2,7 @@ name: Rollback Deployment
 
 on:
   push:
-    branches: ["rollback-branch"]
+    branches: ["main"]
     paths: [".github/workflows/rollback.yml"]
   
   # workflow_run:
@@ -25,4 +25,4 @@ jobs:
         ROLLBACK_DEPLOYMENT=$(curl -s -X POST \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \ https://api.github.com/repos/:owner/:repo/deployments \
-          -d '{ "ref": "3bb8bbd"}')
+          -d '{ "ref": "fd77d274be2094e2a0e66455e17d98c6419dd32c"}')
