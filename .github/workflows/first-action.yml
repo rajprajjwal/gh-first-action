@@ -1,7 +1,8 @@
 # This is a basic workflow to help you get started with Actions
 
-name: First workflow
-on: workflow_dispatch
+name: Deploy
+on:
+  push:
 jobs:
   firstjob:
     runs-on: ubuntu-latest
@@ -10,22 +11,5 @@ jobs:
         run: echo Hello, world!
       - name: Run a multi-line script pring good bye
         run: |
-          echo "Done - Good Bye for Rollback version3"
-
-
-
-# # This is a basic workflow to help you get started with Actions
-
-# name: Deploy
-# on:
-#   push:
-# jobs:
-#   firstjob:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Run a one-line script for print greetings 
-#         run: echo Hello, world!
-#       - name: Run a multi-line script pring good bye
-#         run: |
-#           echo "Done - Good Bye"
+          echo "Done - Good Bye"
 
