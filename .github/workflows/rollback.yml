@@ -1,28 +1,68 @@
 name: Rollback Deployment
 
 on:
-  push:
-    branches: ["rollback-branch"]
-    paths: [".github/workflows/first-action.yml"]
-  
-  # workflow_run:
-  #   workflows: ["Deploy"]
-  #   types:  [requested]
-  #   branches:
-  #     - 'rollback-branch'
+  workflow_run:
+    workflows: ["Deploy"]  # Replace with the name of your deployment workflow
+    types:
+      - completed
 
 jobs:
   rollback:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
-    - name: Create Rollback Deployment
-      id: rollback-deployment
+    - name: Get Previous Deployment
+      id: get_deployment
+      run: |
+        PREVIOUS_DEPLOYMENT=$(curl -X GET \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.ant-man-preview+json" \
+          "https://api.github.com/repos/${{ github.repository }}/deployments?environment=production&per_page=1")
+        echo "::set-output name=previous_deployment::$(echo $PREVIOUS_DEPLOYMENT | jq -r '.[0].id')"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Rollback Deployment
       run: |
-        ROLLBACK_DEPLOYMENT=$(curl -s -X POST \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \ https://api.github.com/repos/:owner/:repo/deployments \
-          -d '{ "ref": "c37070ba45a3409e9a7ed6eeaa4bd35dd3e74454"}')
+        PREVIOUS_DEPLOYMENT_ID="${{ steps.get_deployment.outputs.previous_deployment }}"
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.ant-man-preview+json" \
+          "https://api.github.com/repos/${{ github.repository }}/deployments/${PREVIOUS_DEPLOYMENT_ID}/statuses" \
+          -d "{\"state\":\"success\",\"environment\":\"production\"}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+# name: Rollback Deployment
+
+# on:
+#   push:
+#     branches: ["rollback-branch"]
+#     paths: [".github/workflows/first-action.yml"]
+  
+#   # workflow_run:
+#   #   workflows: ["Deploy"]
+#   #   types:  [requested]
+#   #   branches:
+#   #     - 'rollback-branch'
+
+# jobs:
+#   rollback:
+#     runs-on: ubuntu-latest
+
+#     steps:
+
+#     - name: Create Rollback Deployment
+#       id: rollback-deployment
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       run: |
+#         ROLLBACK_DEPLOYMENT=$(curl -s -X POST \
+#           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+#           -H "Accept: application/vnd.github.v3+json" \ https://api.github.com/repos/:owner/:repo/deployments \
+#           -d '{ "ref": "c37070ba45a3409e9a7ed6eeaa4bd35dd3e74454"}')
